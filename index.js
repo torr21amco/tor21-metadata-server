@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const { Web3 } = require('web3');
-const web3 = new Web3(new Web3.providers.HttpProvider('https://polygon-rpc.com'));
 const abi = [
     {
       "inputs": [
