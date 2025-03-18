@@ -986,16 +986,38 @@ app.use(express.json());
 app.use(cors({ origin: ['https://opensea.io', 'https://polygonscan.com'] }));
 
 app.get('/metadata/:tokenId', async (req, res) => {
-  const tokenId = req.params.tokenId; // Definir tokenId fuera del try para usarlo en catch
+  const tokenId = req.params.tokenId;
   try {
-    const entidad = await contract.methods.entidadPorNFT(tokenId).call().catch(err => { throw new Error(`entidadPorNFT falló: ${err.message}`); });
-    const expiracion = await contract.methods.expiracionNFT(tokenId).call().catch(err => { throw new Error(`expiracionNFT falló: ${err.message}`); });
-    const activo = await contract.methods.isActive(tokenId).call().catch(err => { throw new Error(`isActive falló: ${err.message}`); });
-    const paquete = await contract.methods.tipoPaquete(tokenId).call().catch(err => { throw new Error(`tipoPaquete falló: ${err.message}`); });
+    console.log(`Obteniendo metadata para tokenId ${tokenId}...`);
 
+    // Verificar si el tokenId existe llamando a ownerOf (si el token no existe, revertirá)
+    let owner;
+    try {
+      owner = await contract.methods.ownerOf(tokenId).call();
+      console.log(`Propietario del tokenId ${tokenId}:`, owner);
+    } catch (err) {
+      throw new Error(`El tokenId ${tokenId} no existe: ${err.message}`);
+    }
+
+    const entidad = await contract.methods.entidadPorNFT(tokenId).call().catch(err => { throw new Error(`entidadPorNFT falló: ${err.message}`); });
+    console.log(`Entidad para tokenId ${tokenId}:`, entidad);
+
+    const expiracion = await contract.methods.expiracionNFT(tokenId).call().catch(err => { throw new Error(`expiracionNFT falló: ${err.message}`); });
+    console.log(`Expiración para tokenId ${tokenId}:`, expiracion);
+
+    const activo = await contract.methods.isActive(tokenId).call().catch(err => { throw new Error(`isActive falló: ${err.message}`); });
+    console.log(`Activo para tokenId ${tokenId}:`, activo);
+
+    const paquete = await contract.methods.tipoPaquete(tokenId).call().catch(err => { throw new Error(`tipoPaquete falló: ${err.message}`); });
+    console.log(`Paquete para tokenId ${tokenId}:`, paquete);
+
+    // Convertir BigInt a Number o String para evitar errores
+    const expiracionNum = Number(expiracion); // Convertir a número
+    const paqueteStr = paquete.toString(); // Convertir a cadena
     const currentTime = Math.floor(Date.now() / 1000);
-    const estado = activo && currentTime <= expiracion ? "Activo" : "Expirado";
-    const duracion = expiracion > currentTime ? `${Math.floor((expiracion - currentTime) / (24 * 60 * 60))} days` : "0 days";
+
+    const estado = activo && currentTime <= expiracionNum ? "Activo" : "Expirado";
+    const duracion = expiracionNum > currentTime ? `${Math.floor((expiracionNum - currentTime) / (24 * 60 * 60))} days` : "0 days";
 
     const metadata = {
       name: `TOR21 Shield NFT #${tokenId}`,
@@ -1004,7 +1026,7 @@ app.get('/metadata/:tokenId', async (req, res) => {
       external_url: "https://tor21.com",
       attributes: [
         { trait_type: "Entidad", value: entidad },
-        { trait_type: "Paquete", value: paquete.toString() },
+        { trait_type: "Paquete", value: paqueteStr },
         { trait_type: "Duración", value: duracion },
         { trait_type: "Estado", value: estado }
       ]
@@ -1012,7 +1034,7 @@ app.get('/metadata/:tokenId', async (req, res) => {
 
     res.json(metadata);
   } catch (error) {
-    console.error(`Error en metadata para tokenId ${tokenId}:`, error.message); // tokenId ya está definido
+    console.error(`Error en metadata para tokenId ${tokenId}:`, error.message);
     res.status(500).json({ error: `Error al obtener metadata para tokenId ${tokenId}: ${error.message}` });
   }
 });
