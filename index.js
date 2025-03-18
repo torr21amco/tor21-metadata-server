@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const { Web3 } = require('web3');
+const cors = require('cors');
 const abi = [
     {
       "inputs": [
@@ -192,76 +193,12 @@ const abi = [
       "inputs": [
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "DominioDesactivado",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "FundsWithdrawn",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "nuevaImagen",
-          "type": "string"
-        }
-      ],
-      "name": "ImagenActualizada",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "uint64",
           "name": "version",
           "type": "uint64"
         }
       ],
       "name": "Initialized",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "nuevaMoneda",
-          "type": "address"
-        }
-      ],
-      "name": "MonedaPrincipalActualizada",
       "type": "event"
     },
     {
@@ -282,14 +219,14 @@ const abi = [
         {
           "indexed": false,
           "internalType": "string",
-          "name": "dominio",
+          "name": "entidad",
           "type": "string"
         },
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "moneda",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "paquete",
+          "type": "uint256"
         }
       ],
       "name": "NFTComprado",
@@ -303,9 +240,47 @@ const abi = [
           "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "entidad",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "paquete",
+          "type": "uint256"
         }
       ],
-      "name": "NFTInutilizado",
+      "name": "NFTCreadoGratis",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "NFTDesactivado",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "NFTEliminado",
       "type": "event"
     },
     {
@@ -356,56 +331,6 @@ const abi = [
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "usuario",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "estado",
-          "type": "bool"
-        }
-      ],
-      "name": "RolAsignado",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "dominio",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "servidor",
-          "type": "string"
-        }
-      ],
-      "name": "SuperUsuarioNFTCreado",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": true,
           "internalType": "address",
           "name": "from",
@@ -430,24 +355,6 @@ const abi = [
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "nuevaImagen",
-          "type": "string"
-        }
-      ],
-      "name": "actualizarImagen",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "to",
           "type": "address"
@@ -459,29 +366,6 @@ const abi = [
         }
       ],
       "name": "approve",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "dominio",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "servidor",
-          "type": "string"
-        }
-      ],
-      "name": "asociarDominioOServidor",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -509,23 +393,8 @@ const abi = [
       "inputs": [
         {
           "internalType": "string",
-          "name": "dominio",
+          "name": "entidad",
           "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "imagenURI",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "cid",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "monedaPago",
-          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -542,26 +411,16 @@ const abi = [
       "inputs": [
         {
           "internalType": "string",
-          "name": "dominio",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "servidor",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "cid",
+          "name": "entidad",
           "type": "string"
         },
         {
           "internalType": "uint256",
-          "name": "nivel",
+          "name": "paquete",
           "type": "uint256"
         }
       ],
-      "name": "crearNFTSuperUsuario",
+      "name": "crearNFTGratis",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -574,7 +433,20 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "desactivarDominio",
+      "name": "desactivarNFT",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "eliminarNFT",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -587,7 +459,26 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "dominioActivo",
+      "name": "entidadPorNFT",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "entidadesRegistradas",
       "outputs": [
         {
           "internalType": "bool",
@@ -606,39 +497,7 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "dominioPorNFT",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
       "name": "expiracionNFT",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "expirationPeriod",
       "outputs": [
         {
           "internalType": "uint256",
@@ -671,47 +530,6 @@ const abi = [
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "moneda",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "estado",
-          "type": "bool"
-        }
-      ],
-      "name": "gestionarMoneda",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "usuario",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "estado",
-          "type": "bool"
-        }
-      ],
-      "name": "gestionarRol",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
@@ -729,57 +547,10 @@ const abi = [
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "imagenBase",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "imagenPorNFT",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
           "name": "_tor21Token",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_polToken",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_tor21PriceFeed",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_polPriceFeed",
           "type": "address"
         }
       ],
@@ -796,25 +567,12 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "inutilizarNFT",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "ipfsCID",
+      "name": "isActive",
       "outputs": [
         {
-          "internalType": "string",
+          "internalType": "bool",
           "name": "",
-          "type": "string"
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -859,38 +617,6 @@ const abi = [
     },
     {
       "inputs": [],
-      "name": "monedaPrincipal",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "monedasPermitidas",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "name",
       "outputs": [
         {
@@ -910,12 +636,12 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "nivelProteccion",
+      "name": "nftActivo",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "bool",
           "name": "",
-          "type": "uint256"
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -954,45 +680,6 @@ const abi = [
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "polPriceFeed",
-      "outputs": [
-        {
-          "internalType": "contract AggregatorV3Interface",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "polToken",
-      "outputs": [
-        {
-          "internalType": "contract IERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "precioBaseUSD",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -1000,20 +687,7 @@ const abi = [
           "type": "uint256"
         }
       ],
-      "name": "preciosUSD",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "recargoPorcentaje",
+      "name": "precios2RT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1029,30 +703,6 @@ const abi = [
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "rolesPorNFT",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1127,58 +777,6 @@ const abi = [
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "newPeriod",
-          "type": "uint256"
-        }
-      ],
-      "name": "setExpirationPeriod",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "nuevaImagenBase",
-          "type": "string"
-        }
-      ],
-      "name": "setImagenBase",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "newThreshold",
-          "type": "uint256"
-        }
-      ],
-      "name": "setLiquidityThreshold",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newToken",
-          "type": "address"
-        }
-      ],
-      "name": "setMainToken",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "string",
           "name": "newMetadataURI",
           "type": "string"
@@ -1187,147 +785,6 @@ const abi = [
       "name": "setMetadataURI",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "paquete",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "newPeriod",
-          "type": "uint256"
-        }
-      ],
-      "name": "setPackageExpiration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "paquete",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "newPriceUSD",
-          "type": "uint256"
-        }
-      ],
-      "name": "setPackagePrice",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "newPriceBaseUSD",
-          "type": "uint256"
-        }
-      ],
-      "name": "setPrice",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "newLevel",
-          "type": "uint256"
-        }
-      ],
-      "name": "setProtectionLevel",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "newRecargo",
-          "type": "uint256"
-        }
-      ],
-      "name": "setRecargoPorcentaje",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "newVersion",
-          "type": "string"
-        }
-      ],
-      "name": "setVersion",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "superUsuarioDominios",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "superUsuarioServidores",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1357,30 +814,6 @@ const abi = [
           "internalType": "string",
           "name": "",
           "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "usuario",
-          "type": "address"
-        }
-      ],
-      "name": "tieneRol",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -1432,32 +865,6 @@ const abi = [
           "internalType": "string",
           "name": "",
           "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "tor21LiquidityThreshold",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "tor21PriceFeed",
-      "outputs": [
-        {
-          "internalType": "contract AggregatorV3Interface",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -1539,11 +946,11 @@ const abi = [
         },
         {
           "internalType": "string",
-          "name": "dominio",
+          "name": "entidad",
           "type": "string"
         }
       ],
-      "name": "verificarDominio",
+      "name": "verificarEntidad",
       "outputs": [
         {
           "internalType": "bool",
@@ -1555,25 +962,7 @@ const abi = [
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "version",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
         {
           "internalType": "uint256",
           "name": "amount",
@@ -1586,11 +975,13 @@ const abi = [
       "type": "function"
     }
   ];
-const contractAddress = '0x674A90a1A8C049c4c4862A4ba950580F72144601';
+// Nueva dirección del contrato (reemplaza con la dirección del nuevo contrato)
+const contractAddress = '0xe81412a196c40112b87c9f3d47cfe71dca949d2b'; // Cambia esto si es una dirección diferente
 const web3 = new Web3('https://polygon-rpc.com');
 const contract = new web3.eth.Contract(abi, contractAddress);
 
 app.use(express.json());
+app.use(cors()); // Añadimos CORS para permitir que OpenSea y Polygonscan accedan
 
 app.get('/metadata/:tokenId', async (req, res) => {
   try {
